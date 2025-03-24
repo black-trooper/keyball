@@ -168,8 +168,13 @@ void pointing_device_driver_set_cpi(uint16_t cpi) {
 
 __attribute__((weak)) void keyball_on_apply_motion_to_mouse_move(keyball_motion_t *m, report_mouse_t *r, bool is_left) {
 #if KEYBALL_MODEL == 61 || KEYBALL_MODEL == 39 || KEYBALL_MODEL == 147 || KEYBALL_MODEL == 44
-    r->x = clip2int8(m->y);
-    r->y = clip2int8(m->x);
+    #if LOW_TRACKBALL_SENSOR
+        r->x = clip2int8(m->x);
+        r->y = -clip2int8(m->y);
+    #else
+        r->x = clip2int8(m->y);
+        r->y = clip2int8(m->x);
+    #endif
     if (is_left) {
         r->x = -r->x;
         r->y = -r->y;
@@ -193,8 +198,13 @@ __attribute__((weak)) void keyball_on_apply_motion_to_mouse_scroll(keyball_motio
 
     // apply to mouse report.
 #if KEYBALL_MODEL == 61 || KEYBALL_MODEL == 39 || KEYBALL_MODEL == 147 || KEYBALL_MODEL == 44
-    r->h = clip2int8(y);
-    r->v = -clip2int8(x);
+    #if LOW_TRACKBALL_SENSOR
+        r->h = clip2int8(x);
+        r->v = clip2int8(y);
+    #else
+        r->h = clip2int8(y);
+        r->v = -clip2int8(x);
+    #endif
     if (is_left) {
         r->h = -r->h;
         r->v = -r->v;
